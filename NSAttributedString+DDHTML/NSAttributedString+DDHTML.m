@@ -29,7 +29,7 @@
 //
 
 #import "NSAttributedString+DDHTML.h"
-#include <libxml/HTMLparser.h>
+#import <libxml/HTMLparser.h>
 
 @implementation NSAttributedString (DDHTML)
 
@@ -60,7 +60,10 @@
     NSMutableAttributedString *nodeAttributedString = [[NSMutableAttributedString alloc] init];
     
     if ((xmlNode->type != XML_ENTITY_REF_NODE) && ((xmlNode->type != XML_ELEMENT_NODE) && xmlNode->content != NULL)) {
-        [nodeAttributedString appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithCString:(const char *)xmlNode->content encoding:NSUTF8StringEncoding]]];
+        NSString *str = [NSString stringWithCString:(const char *)xmlNode->content encoding:NSUTF8StringEncoding];
+        if (str != nil && str != NULL) {
+            [nodeAttributedString appendAttributedString:[[NSAttributedString alloc] initWithString:str]];
+        }
     }
     
     // Handle children
@@ -185,6 +188,19 @@
             }
             if (backgroundColor) {
                 [nodeAttributedString addAttribute:NSBackgroundColorAttributeName value:backgroundColor range:nodeAttributedStringRange];
+            }
+        }
+        
+        //anchor tag
+        else if (strncmp("a", (const char *)xmlNode->name, strlen((const char *)xmlNode->name)) == 0) {
+            xmlChar *hrefProp = xmlGetProp(xmlNode, BAD_CAST("href"));
+            if(hrefProp != nil)
+            {
+                NSString *href = [NSString stringWithUTF8String:(char *)hrefProp];
+                if(href != nil)
+                {
+                    [nodeAttributedString addAttribute:NSLinkAttributeName value:href range:nodeAttributedStringRange];
+                }
             }
         }
         
