@@ -41,6 +41,9 @@ NSAttributedString+DDHTML requires a minimum iOS deployment target of iOS 4.3 be
 ### b - Bold
 * This tag only works if the boldFont parameter isn't nil.
 
+### a - Anchor Tags (added by [@dezinezync](https://github.com/dezinezync))
+* Only works with text at the moment. Images not yet supported.
+
 ### u - Underline
 
 ### strike - Stikethrough
